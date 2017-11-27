@@ -1,0 +1,43 @@
+/*匹配界面*/
+.quantu {
+	width:60%;
+	margin:20% 20%;
+}
+.shuaxin {
+	width:10%;
+	margin:0 45% 10%;
+}
+.zzxz {
+	width:40%;
+	margin:0 30%;
+}
+.match{
+	width:100%;
+	height:100%;
+	background-image:url(../img/background.jpg);
+	border-style: none;
+}
+
+/*游戏界面*/
+.game{
+	width:100%;
+	height:100%;
+	background-image:url(../img/game/bg.png);
+	border-style: none;
+	display: none;
+}
+.main{
+	background-image:url(../img/background.jpg);
+	border-style: none;
+}
+.myBan,.airBan,.vs,.name,.bricks{
+	position: absolute;
+}
+.name {
+	font-size:50px;
+	color:#fff;
+	writing-mode:vertical-rl;
+}
+.bricks {
+	outline:#fff solid thin;
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--scan 属自动扫描文件，实时更新配置 -->
+<configuration scan="true" scanPeriod="3600 seconds" >
+    <!--appender 输出目的地 console 控制台 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %class.%method:%line - %msg%n</pattern>
+        </encoder>
+        <target>System.out</target>
+    </appender>
+    <!--  设置日志目录 -->
+    <property name="LOG_HOME" value="../logs" />
+    <property name="LOG_NAME" value="applook" />
+    <property name="LOG_DEFAULT_LEVEL" value="DEBUG" />
+
+    <!-- 常规日志监控-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${LOG_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %class.%method:%line - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Spring 存贮检测 -->
+    <logger name="org.springframework.jdbc.core.JdbcTemplate" level="${LOG_DEFAULT_LEVEL}" />
+    <logger name="org.springframework.jdbc.core.NamedParameterJdbcTemplate" level="${LOG_DEFAULT_LEVEL}" />
+    <logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="${LOG_DEFAULT_LEVEL}" />
+
+    <!-- 日志输出级别 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>
