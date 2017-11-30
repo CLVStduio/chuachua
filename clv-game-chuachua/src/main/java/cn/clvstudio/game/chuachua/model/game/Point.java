@@ -1,4 +1,4 @@
-package cn.clvstudio.game.chuachua.game.model;
+package cn.clvstudio.game.chuachua.model.game;
 
 /**
  * 点的位置

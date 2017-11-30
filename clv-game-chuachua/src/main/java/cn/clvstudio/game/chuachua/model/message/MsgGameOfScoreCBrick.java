@@ -1,4 +1,4 @@
-package cn.clvstudio.game.chuachua.model;
+package cn.clvstudio.game.chuachua.model.message;
 
 import java.util.List;
 

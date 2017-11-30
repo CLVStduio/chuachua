@@ -1,4 +1,4 @@
-package cn.clvstudio.game.chuachua.model;
+package cn.clvstudio.game.chuachua.model.game;
 
 import org.springframework.web.socket.WebSocketSession;
 
@@ -11,7 +11,7 @@ public class Player {
 	private String playerId;
 	private String name;
 	/**
-	 * 状态（0：闲逛中；1：匹配中；2：游戏中；3：结算中;9:断线;）
+	 * 状态（0：闲逛中；1：匹配中；2：准备中；3：游戏中；4：结算中;9:断线;）
 	 */
 	private String status;
 	private WebSocketSession session;
@@ -51,6 +51,11 @@ public class Player {
 	}
 	public void setSession(WebSocketSession session) {
 		this.session = session;
+	}
+
+	@Override
+	public String toString() {
+		return "playerId：" + playerId + " , name：" + name + " , session：" + session + " ";
 	}
 	
 }

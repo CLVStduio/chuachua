@@ -1,8 +1,8 @@
-package cn.clvstudio.game.chuachua.model;
+package cn.clvstudio.game.chuachua.model.message;
 
 import cn.clvstudio.game.chuachua.constants.Constants.GameParameter;
-import cn.clvstudio.game.chuachua.game.model.Ball;
-import cn.clvstudio.game.chuachua.game.model.Time;
+import cn.clvstudio.game.chuachua.model.game.Ball;
+import cn.clvstudio.game.chuachua.model.game.Time;
 
 /**
  * 游戏中球和时间信息发送
@@ -13,11 +13,13 @@ public class MsgGameOfBallTime {
 	private double ballX;
 	private double ballY;
 	private String time;
+	
 	public MsgGameOfBallTime(Ball ball,Time time){
 		this.ballX = ball.getCenterX()/GameParameter.INTERACE_WIDTH;
 		this.ballY = ball.getCenterY()/GameParameter.INTERFACE_HEIGHT;
 		this.time = time.toString();
 	}
+	
 	public double getBallX() {
 		return ballX;
 	}

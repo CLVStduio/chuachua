@@ -1,6 +1,7 @@
-package cn.clvstudio.game.chuachua.model;
+package cn.clvstudio.game.chuachua.model.message;
 
 /**
+ * 通用信息（接收到的）
  * @author Darnell
  *
  */

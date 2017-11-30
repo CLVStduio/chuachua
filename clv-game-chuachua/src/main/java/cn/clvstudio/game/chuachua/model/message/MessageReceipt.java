@@ -1,4 +1,4 @@
-package cn.clvstudio.game.chuachua.model;
+package cn.clvstudio.game.chuachua.model.message;
 
 /**
  * 信息回执
@@ -11,7 +11,7 @@ public class MessageReceipt {
 	 */
 	private String t;
 	/**
-	 * 结果
+	 * 回执状态
 	 */
 	private String s;
 	/**
