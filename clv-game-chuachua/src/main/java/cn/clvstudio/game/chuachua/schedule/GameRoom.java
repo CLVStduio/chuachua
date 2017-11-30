@@ -1,4 +1,4 @@
-package cn.clvstudio.game.chuachua.game;
+package cn.clvstudio.game.chuachua.schedule;
 
 import java.util.List;
 import java.util.Random;
@@ -12,22 +12,22 @@ import cn.clvstudio.game.chuachua.constants.Constants.PlayerStatus;
 import cn.clvstudio.game.chuachua.constants.Constants.ReceiptStatus;
 import cn.clvstudio.game.chuachua.constants.Constants.ReceiptType;
 import cn.clvstudio.game.chuachua.constants.Constants.RoomStatus;
-import cn.clvstudio.game.chuachua.game.model.Ball;
-import cn.clvstudio.game.chuachua.game.model.Ban;
-import cn.clvstudio.game.chuachua.game.model.Brick;
-import cn.clvstudio.game.chuachua.game.model.Time;
-import cn.clvstudio.game.chuachua.game.model.Wall;
-import cn.clvstudio.game.chuachua.model.MsgGameOfBallTime;
-import cn.clvstudio.game.chuachua.model.MsgGameOfScoreCBrick;
-import cn.clvstudio.game.chuachua.model.Player;
+import cn.clvstudio.game.chuachua.model.game.Ball;
+import cn.clvstudio.game.chuachua.model.game.Ban;
+import cn.clvstudio.game.chuachua.model.game.Brick;
+import cn.clvstudio.game.chuachua.model.game.Player;
+import cn.clvstudio.game.chuachua.model.game.Time;
+import cn.clvstudio.game.chuachua.model.game.Wall;
+import cn.clvstudio.game.chuachua.model.message.MsgGameOfBallTime;
+import cn.clvstudio.game.chuachua.model.message.MsgGameOfScoreCBrick;
 import cn.clvstudio.game.chuachua.service.IMessageService;
 
 /**
- * 游戏
+ * 游戏房间
  * @author Darnell
  *
  */
-public class Game implements Runnable{
+public class GameRoom implements Runnable{
 	
 	@Resource
 	private IMessageService messageService;
@@ -57,7 +57,7 @@ public class Game implements Runnable{
 	/**玩家B的分数*/
 	private int scoreB;
 	
-	public Game(Player playerA,Player playerB){
+	public GameRoom(Player playerA,Player playerB){
 		this.roomId =  UUID.randomUUID().toString();
 		this.playerA = playerA;
 		this.playerB = playerB;
@@ -87,10 +87,7 @@ public class Game implements Runnable{
 		if(status.equals(RoomStatus.ROOM_STATUS_READY)){
 			if(PlayerStatus.PLAYER_STATUS_GAME.equals(playerA.getStatus()) && PlayerStatus.PLAYER_STATUS_GAME.equals(playerB.getStatus()) ){
 				this.status = RoomStatus.ROOM_STATUS_GAME;
-				messageService.sendMessageToUser(playerB.getSession(), 
-						ReceiptType.RECEIPT_TYPE_GAME,ReceiptStatus.ROOM_STATUS_SUCCESS,PlayerStatus.PLAYER_FLAG_B );
-				messageService.sendMessageToUser(playerA.getSession(), 
-						ReceiptType.RECEIPT_TYPE_GAME,ReceiptStatus.ROOM_STATUS_SUCCESS,PlayerStatus.PLAYER_FLAG_A );
+				
 			}
 			return;
 		}
@@ -104,7 +101,7 @@ public class Game implements Runnable{
 			ball.move();
 			time.setTotalMS();
 			messageService.sendMessageToRoom(playerA.getSession(),playerB.getSession(), 
-					ReceiptType.RECEIPT_TYPE_GAME,ReceiptStatus.RECEIPT_STATUS_SUCCESS,new MsgGameOfBallTime(ball,time));
+					ReceiptType.RECEIPT_TYPE_GAME,ReceiptStatus.GAME_BALL_TIME,new MsgGameOfBallTime(ball,time));
 			if(time.getTotalMS() <= 0 || brickSToB.size() == 0 || brickSToA.size() == 0){
 				this.status = RoomStatus.ROOM_STATUS_SETTLE;
 				playerA.setStatus(PlayerStatus.PLAYER_STATUS_SETTLE);
@@ -113,7 +110,9 @@ public class Game implements Runnable{
 			return;
 		}
 		if(status.equals(RoomStatus.ROOM_STATUS_SETTLE)){
-			
+			if(!PlayerStatus.PLAYER_STATUS_SETTLE.equals(playerA.getStatus()) && !PlayerStatus.PLAYER_STATUS_SETTLE.equals(playerB.getStatus())){
+				this.status = RoomStatus.ROOM_STATUS_OVER;
+			}
 			return;
 		}
 	}
@@ -126,13 +125,14 @@ public class Game implements Runnable{
 			if(brick.collision(this.ball)){
 				clearBrick.add(brick.getId());
 				bricks.remove(brick);
+				
+				if(playerFlag == PlayerStatus.PLAYER_FLAG_A){
+					scoreB += GameParameter.BRICK_SCORE;
+				}else{
+					scoreA += GameParameter.BRICK_SCORE;
+				}
 			}
 		});
-		if(playerFlag == PlayerStatus.PLAYER_FLAG_A){
-			scoreB += GameParameter.BRICK_SCORE;
-		}else{
-			scoreA += GameParameter.BRICK_SCORE;
-		}
 		if(clearBrick.size() > 0){
 			messageService.sendMessageToRoom(playerA.getSession(),playerB.getSession(), 
 					ReceiptType.RECEIPT_TYPE_GAME,receiptStatus,new MsgGameOfScoreCBrick(scoreA,scoreB,clearBrick));
@@ -149,6 +149,18 @@ public class Game implements Runnable{
 
 	public String getRoomId() {
 		return roomId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public Player getPlayerA() {
+		return playerA;
+	}
+
+	public Player getPlayerB() {
+		return playerB;
 	}
 	
 }
