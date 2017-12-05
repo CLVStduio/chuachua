@@ -9,21 +9,25 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import cn.clvstudio.game.chuachua.constants.Constants;
-import cn.clvstudio.game.chuachua.model.Player;
+import cn.clvstudio.game.chuachua.model.game.Player;
 
 /**
  * websocket拦截器
  * @author Darnell
  *
  */
-public class WebSocketInterceptor implements HandshakeInterceptor {
+public class WebSocketInterceptor extends HttpSessionHandshakeInterceptor implements HandshakeInterceptor {
 
 	@Override
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Map<String, Object> attributes) throws Exception {
 		//将ServerHttpRequest转换成request请求相关的类，用来获取request域中的用户信息	
+		if(request.getHeaders().containsKey("Sec-WebSocket-Extensions")) {
+			request.getHeaders().set("Sec-WebSocket-Extensions", "permessage-deflate");
+        }
 		if (request instanceof ServletServerHttpRequest) {
 			ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
 			HttpServletRequest httpRequest = servletRequest.getServletRequest();
@@ -39,7 +43,7 @@ public class WebSocketInterceptor implements HandshakeInterceptor {
 	@Override
 	public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Exception exception) {
-
+		super.afterHandshake(request, response, wsHandler, exception);
 	}
 
 }
