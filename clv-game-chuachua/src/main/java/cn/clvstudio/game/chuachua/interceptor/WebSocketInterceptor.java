@@ -24,10 +24,15 @@ public class WebSocketInterceptor extends HttpSessionHandshakeInterceptor implem
 	@Override
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Map<String, Object> attributes) throws Exception {
-		//将ServerHttpRequest转换成request请求相关的类，用来获取request域中的用户信息	
+		/** 旧版本的浏览器或者三方工具利用了比较旧的非规范扩展“x-webkit-deflate-frame”,
+		 * 而最新的浏览器发送的是websocket草案中规范的“permessage-deflate”，
+		 * 所以在拦截器内强行修改websocket协议，
+		 * 将部分浏览器不支持的 x-webkit-deflate-frame 
+		 * 扩展修改成 permessage-deflate */  
 		if(request.getHeaders().containsKey("Sec-WebSocket-Extensions")) {
 			request.getHeaders().set("Sec-WebSocket-Extensions", "permessage-deflate");
         }
+		//将ServerHttpRequest转换成request请求相关的类，用来获取request域中的用户信息	
 		if (request instanceof ServletServerHttpRequest) {
 			ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
 			HttpServletRequest httpRequest = servletRequest.getServletRequest();
