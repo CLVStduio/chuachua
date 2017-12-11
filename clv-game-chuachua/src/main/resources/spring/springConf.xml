@@ -15,8 +15,7 @@
 		  http://www.springframework.org/schema/websocket 
 		  http://www.springframework.org/schema/websocket/spring-websocket.xsd">
 
-	<context:component-scan base-package="cn.clvstudio.game.chuachua.service" />
-	<context:component-scan base-package="cn.clvstudio.game.chuachua.websocket"/>
+	<context:component-scan base-package="cn.clvstudio.game.chuachua" />
 	
 	<!-- 配置MultipartResolver 用于文件上传 使用spring的CommosMultipartResolver -->
 	<bean id="multipartResolver"
@@ -24,7 +23,7 @@
 		p:defaultEncoding="UTF-8" p:maxUploadSize="5400000">
 	</bean>
 
-	<!-- 注入参数 -->
+	<!-- 注入参数 
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -33,5 +32,5 @@
 			</list>
 		</property>
 	</bean>
-
+-->
 </beans>

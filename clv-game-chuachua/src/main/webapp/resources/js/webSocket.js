@@ -1,6 +1,6 @@
 var ws;
-var url = "127.0.0.1:8080"+ctx;
-var width;
+var url = "192.168.0.102:8080"+ctx;
+
 window.onload = function connect(){
 		if ('WebSocket' in window) {
 			ws = new WebSocket("ws://"+url+"/webSocketServer");
@@ -12,33 +12,45 @@ window.onload = function connect(){
 			ws = new SockJS("http://"+url+"/sockjs/webSocketServer");
 		}
 		ws.onopen = function (evnt) {
-			console.log("打开连接。。。");
+			$(".logger").html("成功连接");
 			ws.send('{t: "b", c: ""}');
 		};
 		ws.onmessage = function (evnt) {
 			eval("obj="+event.data);
-			if(obj.t == "b"){
+			if(obj.t == Constants.ReceiptType.RECEIPT_TYPE_MATCH){
 				//匹配信息
-				if(obj.s == "s"){	
+				if(obj.s == Constants.ReceiptStatus.ROOM_STATUS_SUCCESS){	
 					console.log(obj.msg);
 					$("#match").css("display","none");
 					$("#game").css("display","block");
-					width = game(ws,obj.msg);
+					game(ws,obj.msg);
+					ws.send('{t: "'+Constants.ReceiptType.RECEIPT_TYPE_GAME
+							+'", c: "'+Constants.MessageForPlayer.PLAYER_READY_OVER+'"}');
+					console.log("匹配信息 over ");
 				}else if(obj.s == "f"){
 					console.log(obj.msg);
-					ws.send('{t: "b", c: ""}');
+					ws.send('{t: "'+Constants.ReceiptType.RECEIPT_TYPE_MATCH+'", c: ""}');
 				}
-			}else if(obj.t == "c"){
+			}else if(obj.t == Constants.ReceiptType.RECEIPT_TYPE_GAME){
 				//游戏信息
-				if(obj.s == "s"){	
+				if(obj.s == Constants.ReceiptStatus.MOVE_BAN){	
 					var x = parseFloat(obj.msg);
-					realTime(x);
+					realBan(x);
+				}else if(obj.s == Constants.ReceiptStatus.GAME_BALL_TIME){
+					realGameOfTime(obj.msg);
+				}else if(obj.s == Constants.ReceiptStatus.CLEAR_BRICK_TO_B){
+					realBrick(obj.msg,1);
+				}else if(obj.s == Constants.ReceiptStatus.CLEAR_BRICK_TO_A){
+					realBrick(obj.msg,0);
 				}else if(obj.s == "f"){
 					console.log(obj.msg);
-					ws.send('{t: "b", c: ""}');
+					ws.send('{t: "'+Constants.ReceiptType.RECEIPT_TYPE_MATCH+'", c: ""}');
 				}
-			}else if(obj.t == "d"){
+			}else if(obj.t == Constants.ReceiptType.RECEIPT_TYPE_SETTLE){
 				//结算信息
+				if(obj.s == Constants.ReceiptStatus.RECEIPT_STATUS_SUCCESS){	
+					
+				}
 			}
 		};
 		ws.onerror = function (evnt) {

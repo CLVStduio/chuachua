@@ -1,10 +1,15 @@
 var origin_x = 0;
 var origin_y = 0;
-function game(ws,airId){
+var width ;
+var height ;
+var flag ;
+var ball_diameter;
+function game(ws,msg){
 	var lookWidth = $(window).width();
 	var lookHeight = $(window).height();
-	var sizeArr = init(lookWidth,lookHeight);
-	
+	init(lookWidth,lookHeight);
+	flag = msg;
+	console.log("flag : "+flag);
 	var doc = document;
 	doc.addEventListener("touchstart",  startTouchScroll, false);
 	doc.addEventListener("touchmove", moveTouchScroll, false);
@@ -20,33 +25,65 @@ function game(ws,airId){
 	        endX = touch.pageX;
 	        var x = parseInt($(".myBan").css("left").replace(/px/g,""));
 	        x += endX - startX;
-	        x = x < origin_x ? origin_x: x+sizeArr[0]/4 > origin_x+sizeArr[0]?origin_x+sizeArr[0]*3/4:x;
+	        x = x < origin_x ? origin_x: x+width/4 > origin_x+width?origin_x+width*3/4:x;
 	        startX = endX;
         	$(".airBan").css("left");
         	$(".myBan").css("left",x);
-        	x = (x-origin_x)/sizeArr[0];
+        	x = (x-origin_x)/width;
         	ws.send('{t: "c", c: "'+x+'"}');
 	}
 	function endTouchScroll(event){
         //计算滑动距离
        
 	}
-	return sizeArr[0];
+	return width;
 }
-function realTime(x){
+function realBan(x){
 	var realX = x*10000*width/10000+origin_x;
 	$(".airBan").css("left",realX);
 }
+function realBrick(obj,clearflag){
+	if(flag == clearflag){
+		obj.cb.forEach(function(id){
+			id+=36;
+			$("#"+id+"").remove();
+		});
+	}else {
+		obj.cb.forEach(function(id){
+			$("#"+id+"").remove();
+		});
+	}
+
+	if(flag == Constants.PlayerStatus.PLAYER_FLAG_A){
+		$(document).attr("title","比分 "+obj.sa+" ： "+obj.sb);
+	}else{
+		$(document).attr("title","比分 "+obj.sb+" ： "+obj.sa);
+	}
+}
+function realGameOfTime(obj){		
+	$("#time").text(obj.time);
+	if(flag == Constants.PlayerStatus.PLAYER_FLAG_A){
+		$(".ball").css({"top":origin_y+obj.ballY*height-ball_diameter/2,"left":origin_x+obj.ballX*width-ball_diameter/2});
+	}else {
+		obj.ballY = 1-obj.ballY;
+		$(".ball").css({"top":origin_y+obj.ballY*height-ball_diameter/2,"left":origin_x+obj.ballX*width-ball_diameter/2});
+	}
+}
 function init(lookWidth,lookHeight){
-	var sizeArr = interfaceInit(lookWidth,lookHeight);
-	var width = sizeArr[0];
-	var height = sizeArr[1];
+	interfaceInit(lookWidth,lookHeight);;
 	initBang(width,height);
 	initBricks(width,height);
-	return sizeArr;
+	initBall(width,height);
+	$(document).attr("title","比分 0 ： 0");
+}
+//球初始化
+function initBall(){
+	ball_diameter = height*32/1000;
+	$(".ball").css({"width":height*32/1000,"top":origin_y+height*468/1000,"left":origin_x});
+	$(".ball").css("display","block");
 }
 //砖块初始化
-function initBricks(width,height){
+function initBricks(){
 	var bricksWidth = width/9;
 	var bricksHeight = bricksWidth*0.6;
 	var html = "";
@@ -67,17 +104,17 @@ function initBricks(width,height){
 	$("#Main").append(html);
 }
 //击打板初始化
-function initBang(width,height){
+function initBang(){
 	var bangWidth = width/4;
 	var bangHeight = height*0.03;
-	$(".myBan").css({"width":bangWidth,"height":bangHeight,"top":origin_y+height*0.7,"left":origin_x+width*3/8});
-	$(".airBan").css({"width":bangWidth,"height":bangHeight,"top":origin_y+height*0.3,"left":origin_x+width*3/8});
+	$(".myBan").css({"width":bangWidth,"height":bangHeight,"top":origin_y+height*0.688,"left":origin_x+width*3/8});
+	$(".airBan").css({"width":bangWidth,"height":bangHeight,"top":origin_y+height*0.282,"left":origin_x+width*3/8});
 }
 
 //游戏界面初始化
 function interfaceInit(lookWidth,lookHeight){
-	var width = lookHeight/16*9;
-	var height =lookHeight;
+	width = lookHeight/16*9;
+	height =lookHeight;
 	if(width<lookWidth){
 		var difWidth = (lookWidth-width)/2;
 		origin_x = difWidth;
@@ -109,5 +146,7 @@ function interfaceInit(lookWidth,lookHeight){
 	//玩家名字
 	$("#myName").css({"top":origin_y+height/2+vsWidth*1.5,"left":origin_x+width-vsWidth-vsWidth*0.4});
 	$("#airName").css({"top":origin_y+height/2-vsWidth*1.5-$("#airName").height(),"left":origin_x+width-vsWidth-vsWidth*0.4});
+	$("#time").css({"top":origin_y+height/2-$("#time").height()/2,"left":origin_x+vsWidth*0.4});
+	
 	return [width,height];
 }

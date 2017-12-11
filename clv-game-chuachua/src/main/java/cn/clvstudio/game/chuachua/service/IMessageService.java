@@ -13,24 +13,34 @@ public interface IMessageService {
 
 	/**
 	 * 单发消息
-	 * @param session
-	 * @param message
+	 * @param session 收信人
+	 * @param message 信息
 	 * @return
 	 */
 	public <T> Boolean sendMessageToUser(WebSocketSession session,WebSocketMessage<T> message);
-	public Boolean sendMessageToUser(WebSocketSession session, String receiptType, String receiptStatus, Object obj);
 	/**
-	 * 双发消息
-	 * @param session
-	 * @param message
+	 * 单发消息
+	 * @param session 收信人
+	 * @param receiptType 回执类型
+	 * @param receiptStatus 回执状态
+	 * @param obj 信息
+	 * @return
+	 */
+	public Boolean sendMessageToUser(WebSocketSession session, String receiptType, String receiptStatus, Object obj);
+	/** 双发消息
+	 * @param sessionA 收信人A
+	 * @param sessionB 收信人B
+	 * @param receiptType 回执类型
+	 * @param receiptStatus 回执状态
+	 * @param obj 信息
 	 * @return
 	 */
 	public <T> Boolean sendMessageToRoom(WebSocketSession sessionA, WebSocketSession sessionB, String receiptType,
 			String receiptStatus, Object obj);
 	/**
 	 * 群发消息
-	 * @param sessionList
-	 * @param message
+	 * @param sessionList 收信人列表
+	 * @param message 信息
 	 */
 	public <T> void sendMessageToAllUser(List<WebSocketSession> sessionList,WebSocketMessage<T> message);
 	 

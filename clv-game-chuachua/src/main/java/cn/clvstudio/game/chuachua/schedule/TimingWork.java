@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 
 import cn.clvstudio.game.chuachua.constants.Constants;
 import cn.clvstudio.game.chuachua.constants.Constants.GameParameter;
@@ -21,6 +22,7 @@ import cn.clvstudio.game.chuachua.constants.Constants.Surveillancer;
  * @author Darnell
  *
  */
+@Component
 public class TimingWork implements InitializingBean{
 
 	private static final  Logger LOG = LoggerFactory.getLogger(TimingWork.class);
@@ -48,7 +50,7 @@ public class TimingWork implements InitializingBean{
 	 * @param game 房间
 	 */
 	public static void gameRoomRegistration(GameRoom game){
-		LOG.info("创建房间：id = "+game.getRoomId()+" ; 玩家A = 【"+game.getPlayerA()+"】 ; 玩家A = 【"+game.getPlayerB());
+		LOG.info("创建房间：id = "+game.getRoomId()+" ; 玩家A = 【"+game.getPlayerA()+"】 ; 玩家B = 【"+game.getPlayerB()+"】");
 		gameRoomList.add(game);
 		gameRoomMap.put(game, schedule.scheduleAtFixedRate(game, 0, GameParameter.RUN_TIME, TimeUnit.MILLISECONDS));
 	}

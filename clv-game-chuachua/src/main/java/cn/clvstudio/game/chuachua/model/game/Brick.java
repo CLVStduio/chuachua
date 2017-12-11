@@ -1,5 +1,8 @@
 package cn.clvstudio.game.chuachua.model.game;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cn.clvstudio.game.chuachua.constants.Constants.GameParameter;
 
 /**
@@ -9,6 +12,8 @@ import cn.clvstudio.game.chuachua.constants.Constants.GameParameter;
  *
  */
 public class Brick {
+	@SuppressWarnings("unused")
+	private static final  Logger LOG = LoggerFactory.getLogger(Brick.class);
 	private int id;
 	/** 宽 */
 	private final int width = GameParameter.BRICK_WIDTH;
@@ -42,40 +47,44 @@ public class Brick {
 	 * @return
 	 */
 	public boolean collision(Ball ball) {
-		Point highestP = ball.getActualPoints().get(0);
-		Point lowestP = ball.getActualPoints().get(4);
-		if ((highestP.getX() > this.upperRightCornerX && highestP.getX() < this.lowerLeftCornerX)
-				&& ((lowestP.getY() >= this.upperRightCornerY && highestP.getY() <= this.upperRightCornerY)
-						|| (lowestP.getY() >= this.lowerLeftCornerY && highestP.getY() <= this.lowerLeftCornerY))) {
-			
-			ball.bounce(GameParameter.UP_DOWN, GameParameter.OBJ_BRICK);
+		Point lowestP = new Point(ball.getCenterX(),ball.getCenterY()+ball.getRadius());
+		Point highestP = new Point(ball.getCenterX(),ball.getCenterY()-ball.getRadius());
+		if (lowestP.getX() >= this.upperRightCornerX &&  lowestP.getX() <= this.lowerLeftCornerX
+				&& lowestP.getY() >=this.upperRightCornerY && highestP.getY() < this.upperRightCornerY) {
+			ball.bounce(GameParameter.COLLISION_UP, GameParameter.OBJ_BRICK);
 			return true;
 		}
-
-		Point leftmostP = ball.getActualPoints().get(6);
-		Point rightmostP = ball.getActualPoints().get(2);
-		if ((leftmostP.getY() > this.upperRightCornerY && leftmostP.getY() < this.lowerLeftCornerY)
-				&& ((rightmostP.getX() >= this.upperRightCornerX && leftmostP.getX() <= this.upperRightCornerX)
-						|| (leftmostP.getX() <= this.lowerLeftCornerX && rightmostP.getX() >= this.lowerLeftCornerX))) {
-			
-			ball.bounce(GameParameter.LEFT_RIGHT, GameParameter.OBJ_BRICK);
+		if (lowestP.getX() >= this.upperRightCornerX &&  lowestP.getX() <= this.lowerLeftCornerX
+				&& highestP.getY() <= this.lowerLeftCornerY && lowestP.getY() > this.lowerLeftCornerY) {
+			ball.bounce(GameParameter.COLLISION_DOWN, GameParameter.OBJ_BRICK);
 			return true;
 		}
-
-		for (Point point : ball.getActualPoints()) {
-			if (point.getX() >= this.upperRightCornerX && point.getX() <= this.lowerLeftCornerX
-					&& point.getY() >= this.upperRightCornerY && point.getY() <= this.lowerLeftCornerY) {
-				
-				ball.bounce(GameParameter.ANGLE, GameParameter.OBJ_BRICK);
-				return true;
-			}
+		Point leftmostP = new Point(ball.getCenterX()-ball.getRadius(),ball.getCenterY());
+		Point rightmostP = new Point(ball.getCenterX()+ball.getRadius(),ball.getCenterY());
+		if (rightmostP.getY() >= this.upperRightCornerY && rightmostP.getY() <= this.lowerLeftCornerY
+				&& rightmostP.getX() >= this.upperRightCornerX && leftmostP.getX() < this.upperRightCornerX ) {
+			ball.bounce(GameParameter.COLLISION_LEFT, GameParameter.OBJ_BRICK);
+			return true;
 		}
+		if (rightmostP.getY() >= this.upperRightCornerY && rightmostP.getY() <= this.lowerLeftCornerY
+				&& leftmostP.getX() <= this.lowerLeftCornerX && rightmostP.getX() > this.lowerLeftCornerX) {
+			ball.bounce(GameParameter.COLLISION_RIGHT, GameParameter.OBJ_BRICK);
+			return true;
+		}
+//		for (Point point : ball.getActualPoints()) {
+//			if (point.getX() >= this.upperRightCornerX && point.getX() <= this.lowerLeftCornerX
+//					&& point.getY() >= this.upperRightCornerY && point.getY() <= this.lowerLeftCornerY) {
+//				LOG.debug("砖发生角碰撞 "+this.toString() + "; " + ball.toString());
+//				ball.bounce(GameParameter.ANGLE, GameParameter.OBJ_BRICK);
+//				return true;
+//			}
+//		}
 		return false;
 	}
 
 	@Override
 	public String toString() {
-		return id + ":" + upperRightCornerX + ", " + upperRightCornerY +":" + lowerLeftCornerX + ", " + lowerLeftCornerY ;
+		return id + ":(" + upperRightCornerX + "," + upperRightCornerY +")|(" + lowerLeftCornerX + "," + lowerLeftCornerY +")";
 	}
 
 }

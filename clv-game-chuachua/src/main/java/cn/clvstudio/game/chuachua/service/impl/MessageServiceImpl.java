@@ -12,7 +12,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import com.alibaba.fastjson.JSON;
 
-import cn.clvstudio.game.chuachua.model.MessageReceipt;
+import cn.clvstudio.game.chuachua.model.message.MessageReceipt;
 import cn.clvstudio.game.chuachua.service.IMessageService;
 
 /**

@@ -3,6 +3,9 @@ package cn.clvstudio.game.chuachua.model.game;
 import java.util.List;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cn.clvstudio.game.chuachua.constants.Constants.GameParameter;
 
 /**
@@ -12,6 +15,8 @@ import cn.clvstudio.game.chuachua.constants.Constants.GameParameter;
  *
  */
 public class Ban {
+	@SuppressWarnings("unused")
+	private static final  Logger LOG = LoggerFactory.getLogger(Ban.class);
 	public final int width = GameParameter.BAN_WIDTH;
 	public final int height = GameParameter.BAN_HEIGHT;
 	public double y;
@@ -22,7 +27,6 @@ public class Ban {
 	public static final List<Point> pointsB = new Vector<Point>();
 	/** 板的几个关键实际点 */
 	public List<Point> actualPoints = new Vector<Point>();
-
 	static {
 		// A 0
 		pointsA.add(new Point(13.2085, 0));
@@ -68,14 +72,14 @@ public class Ban {
 
 	public Ban(double y) {
 		this.y = y;
-		this.x = (GameParameter.INTERACE_WIDTH-GameParameter.BAN_WIDTH)/2;
+		this.x = (GameParameter.INTERACE_WIDTH - GameParameter.BAN_WIDTH) / 2;
 		this.actualPoints = y == GameParameter.BAN_TOP_A ? pointsA : pointsB;
-		getActualPoint();
+		getActualPoint(this.x, this.y);
 	}
 
-	public void getActualPoint() {
+	public void getActualPoint(double x, double y) {
 		this.actualPoints.forEach(point -> {
-			point.getActual(this.x, this.y);
+			point.getActual(x, y);
 		});
 	}
 
@@ -86,50 +90,57 @@ public class Ban {
 	 *            Displacement ratio 位移比
 	 */
 	public void move(double disRatio) {
-		this.x = disRatio * GameParameter.INTERACE_WIDTH;
-		getActualPoint();
+		double x = disRatio * GameParameter.INTERACE_WIDTH;
+		getActualPoint(x - this.x, 0);
+		this.x = x;
 	}
 
 	/**
 	 * 板是否和球发送碰撞
 	 * 
-	 * @param ball 球
+	 * @param ball
+	 *            球
 	 */
 	public void collision(Ball ball) {
-		Point highestP = ball.getActualPoints().get(0);
-		Point lowestP = ball.getActualPoints().get(4);
-		if ((highestP.getX() > actualPoints.get(0).getX() && highestP.getX() < actualPoints.get(5).getX())
-				&& ((highestP.getY() < actualPoints.get(0).getY() && lowestP.getY() >= actualPoints.get(0).getY())
-						|| (highestP.getY() < actualPoints.get(5).getY()
-								&& lowestP.getY() >= actualPoints.get(5).getY()))) {
-			ball.bounce(GameParameter.UP_DOWN, GameParameter.OBJ_BAN);
+		Point lowestP = new Point(ball.getCenterX(),ball.getCenterY()+ball.getRadius());
+		Point highestP = new Point(ball.getCenterX(),ball.getCenterY()-ball.getRadius());
+		if ( lowestP.getX() > this.actualPoints.get(8).getX() && lowestP.getX() < this.actualPoints.get(3).getX()
+				&& lowestP.getY() >= this.actualPoints.get(0).getY() && highestP.getY() < this.actualPoints.get(0).getY() ) {
+			ball.bounce(GameParameter.COLLISION_UP, GameParameter.OBJ_BAN);
 			return;
 		}
-		Point leftmostP = ball.getActualPoints().get(6);
-		Point rightmostP = ball.getActualPoints().get(2);
-		if ((leftmostP.getY() > actualPoints.get(9).getY() && leftmostP.getY() < actualPoints.get(4).getY()
-				&& leftmostP.getX() < actualPoints.get(7).getX() && rightmostP.getX() >= actualPoints.get(7).getX())
-				|| (leftmostP.getY() > actualPoints.get(2).getY() && leftmostP.getY() < actualPoints.get(7).getY()
-						&& leftmostP.getX() <= actualPoints.get(2).getX()
-						&& rightmostP.getX() > actualPoints.get(2).getX())) {
-			ball.bounce(GameParameter.LEFT_RIGHT, GameParameter.OBJ_BAN);
+		if( lowestP.getX() > this.actualPoints.get(8).getX() && lowestP.getX() < this.actualPoints.get(3).getX()
+				&& lowestP.getY() > this.actualPoints.get(5).getY() && highestP.getY() <= this.actualPoints.get(5).getY() ){
+			ball.bounce(GameParameter.COLLISION_DOWN, GameParameter.OBJ_BAN);
 			return;
 		}
-
-		for (Point point : ball.getActualPoints()) {
-			if ((point.getX() <= actualPoints.get(0).getX() && point.getX() >= actualPoints.get(9).getX()
-					&& point.getY() >= actualPoints.get(0).getY() && point.getY() <= actualPoints.get(9).getY())
-					|| (point.getX() <= actualPoints.get(2).getX() && point.getX() >= actualPoints.get(1).getX()
-							&& point.getY() >= actualPoints.get(1).getY() && point.getY() <= actualPoints.get(2).getY())
-					|| (point.getX() <= actualPoints.get(4).getX() && point.getX() >= actualPoints.get(5).getX()
-							&& point.getY() >= actualPoints.get(4).getY() && point.getY() <= actualPoints.get(5).getY())
-					|| (point.getX() <= actualPoints.get(6).getX() && point.getX() >= actualPoints.get(7).getX()
-							&& point.getY() >= actualPoints.get(7).getY()
-							&& point.getY() <= actualPoints.get(6).getY())) {
-				ball.bounce(GameParameter.ANGLE, GameParameter.OBJ_BAN);
-				return ;
-			}
+		
+		Point leftmostP = new Point(ball.getCenterX()-ball.getRadius(),ball.getCenterY());
+		Point rightmostP = new Point(ball.getCenterX()+ball.getRadius(),ball.getCenterY());
+		if ( leftmostP.getY() > this.actualPoints.get(0).getY() && leftmostP.getY() < this.actualPoints.get(5).getY()
+				&& rightmostP.getX() >= this.actualPoints.get(8).getX() && leftmostP.getX() < this.actualPoints.get(8).getX()) {
+			ball.bounce(GameParameter.COLLISION_LEFT, GameParameter.OBJ_BAN);
+			return;
 		}
-
+		if ( leftmostP.getY() > this.actualPoints.get(0).getY() && leftmostP.getY() < this.actualPoints.get(5).getY()
+				&& leftmostP.getX() <= this.actualPoints.get(3).getX() && rightmostP.getX() > this.actualPoints.get(3).getX()) {
+			ball.bounce(GameParameter.COLLISION_RIGHT, GameParameter.OBJ_BAN);
+			return;
+		}
+//		
+//		for (Point point : ball.getActualPoints()) {
+//			if ((point.getX() <= actualPoints.get(0).getX() && point.getX() >= actualPoints.get(9).getX()
+//					&& point.getY() >= actualPoints.get(0).getY() && point.getY() <= actualPoints.get(9).getY())
+//					|| (point.getX() <= actualPoints.get(2).getX() && point.getX() >= actualPoints.get(1).getX()
+//							&& point.getY() >= actualPoints.get(1).getY() && point.getY() <= actualPoints.get(2).getY())
+//					|| (point.getX() <= actualPoints.get(4).getX() && point.getX() >= actualPoints.get(5).getX()
+//							&& point.getY() >= actualPoints.get(4).getY() && point.getY() <= actualPoints.get(5).getY())
+//					|| (point.getX() <= actualPoints.get(6).getX() && point.getX() >= actualPoints.get(7).getX()
+//							&& point.getY() >= actualPoints.get(7).getY()
+//							&& point.getY() <= actualPoints.get(6).getY())) {
+//				ball.bounce(GameParameter.COLLISION_ANGLE, GameParameter.OBJ_BAN);
+//				return;
+//			}
+//		}
 	}
 }

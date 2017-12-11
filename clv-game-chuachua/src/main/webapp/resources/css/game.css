@@ -30,7 +30,7 @@
 	background-image:url(../img/background.jpg);
 	border-style: none;
 }
-.myBan,.airBan,.vs,.name,.bricks{
+.myBan,.airBan,.vs,.name,.time,.bricks,.ball{
 	position: absolute;
 }
 .name {
@@ -38,6 +38,14 @@
 	color:#fff;
 	writing-mode:vertical-rl;
 }
+.time {
+	font-size:50px;
+	color:#fff;
+	writing-mode:vertical-lr;
+}
 .bricks {
 	outline:#fff solid thin;
+}
+.ball {
+	display: none;
 }

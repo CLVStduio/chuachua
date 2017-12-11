@@ -1,6 +1,7 @@
 package cn.clvstudio.game.chuachua.websocket;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,8 +19,10 @@ import com.alibaba.fastjson.JSON;
 import cn.clvstudio.game.chuachua.constants.Constants;
 import cn.clvstudio.game.chuachua.constants.Constants.PlayerStatus;
 import cn.clvstudio.game.chuachua.constants.Constants.ReceiptType;
-import cn.clvstudio.game.chuachua.model.MessageGeneral;
-import cn.clvstudio.game.chuachua.model.Player;
+import cn.clvstudio.game.chuachua.constants.Constants.RoomStatus;
+import cn.clvstudio.game.chuachua.model.game.Player;
+import cn.clvstudio.game.chuachua.model.message.MessageGeneral;
+import cn.clvstudio.game.chuachua.schedule.GameRoom;
 import cn.clvstudio.game.chuachua.service.IHandleService;
 import cn.clvstudio.game.chuachua.service.IMessageService;
 
@@ -32,11 +35,11 @@ public class WebsocketHandler implements WebSocketHandler {
 	private static final  Logger LOG = LoggerFactory.getLogger(WebsocketHandler.class);
 	
 	/**玩家的id和玩家的信息*/
-	private ConcurrentHashMap<String, Player> allPlayer = new ConcurrentHashMap<String,Player>();
+	private Map<String, Player> allPlayer = new ConcurrentHashMap<String,Player>();
 	/**匹配中的玩家*/
 	private List<Player> matchPlayer = new Vector<Player>();
-	/** 游戏中的玩家。<自身的id，对方玩家的信息> */
-	private ConcurrentHashMap<String,Player> gamePlayer = new ConcurrentHashMap<String,Player>();
+	/** 游戏中的玩家对房间信息<自身的id，房间信息> */
+	private Map<String,GameRoom> playerToRoom = new ConcurrentHashMap<String,GameRoom>();
 	/** 断线玩家的id */
 	private List<String> closePlayer = new Vector<String>();
 	
@@ -63,17 +66,16 @@ public class WebsocketHandler implements WebSocketHandler {
 			}
 			return;
 		}
-		closePlayer.forEach(playerId -> {
-			if(playerId.equals(session.getId())){
-				if(gamePlayer.containsKey(playerId)){
-					allPlayer.get(playerId).setStatus(PlayerStatus.PLAYER_STATUS_GAME);
-					return;
-				}
-				allPlayer.get(playerId).setStatus(PlayerStatus.PLAYER_STATUS_IDLE);
-				return;
-			}
-		});
-		
+//		closePlayer.forEach(playerId -> {
+//			if(playerId.equals(session.getId())){
+//				if(playerToRoom.containsKey(playerId)){
+//					allPlayer.get(playerId).setStatus(PlayerStatus.PLAYER_STATUS_GAME);
+//					return;
+//				}
+//				allPlayer.get(playerId).setStatus(PlayerStatus.PLAYER_STATUS_IDLE);
+//				return;
+//			}
+//		});
 	}
 
 	/** 
@@ -88,13 +90,13 @@ public class WebsocketHandler implements WebSocketHandler {
 		Player myPlay = allPlayer.get(session.getId());
 		if(null != myPlay){
 			if(ReceiptType.RECEIPT_TYPE_MATCH.equals(msg.getT())){
-				handleService.matchMessage(myPlay, allPlayer, matchPlayer, gamePlayer);
+				handleService.matchMessage(myPlay, allPlayer, matchPlayer, playerToRoom);
 			}
 			if(ReceiptType.RECEIPT_TYPE_GAME.equals(msg.getT())){
-				handleService.gameMessage(myPlay, gamePlayer,msg.getC());
+				handleService.gameMessage(myPlay, playerToRoom,msg.getC());
 			}
 			if(ReceiptType.RECEIPT_TYPE_SETTLE.equals(msg.getT())){
-				
+				handleService.settleMessage(myPlay, playerToRoom);
 			}
 		}else {
 			if(ReceiptType.RECEIPT_TYPE_MATCH.equals(msg.getT())){
@@ -121,8 +123,18 @@ public class WebsocketHandler implements WebSocketHandler {
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
 		LOG.info("连接关闭-id："+session.getId()+"。》》 》  closeStatus:"+closeStatus.toString());
-		allPlayer.get(session.getId()).setStatus(PlayerStatus.PLAYER_STATUS_CLOSE);
-		matchPlayer.remove(allPlayer.get(session.getId()));
+		Player player = allPlayer.get(session.getId());
+		if(player != null){
+			player.setStatus(PlayerStatus.PLAYER_STATUS_CLOSE);
+			GameRoom game = playerToRoom.get(player.getPlayerId());
+			if(game != null){
+				if(RoomStatus.ROOM_STATUS_OVER.equals(game.getStatus())){
+					playerToRoom.remove(player.getPlayerId(), game);
+				}
+			}
+			matchPlayer.remove(allPlayer.get(session.getId()));
+			allPlayer.remove(session.getId(), player);
+		}
 	}
 
 	/**

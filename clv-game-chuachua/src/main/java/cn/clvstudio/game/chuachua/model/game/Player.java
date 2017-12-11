@@ -24,6 +24,7 @@ public class Player {
 	public Player(WebSocketSession session,String status){
 		this.session = session;
 		this.status = status;
+		this.playerId =  session.getId();
 	}
 	
 	public String getPlayerId() {

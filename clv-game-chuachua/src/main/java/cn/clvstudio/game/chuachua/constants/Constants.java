@@ -25,17 +25,18 @@ public class Constants {
 		public static final String PLAYER_STATUS_IDLE = "0";
 		/** 匹配中 */
 		public static final String PLAYER_STATUS_MATCH = "1";
-		/** 游戏中正在准备 */
+		/** 准备开始游戏 */
 		public static final String PLAYER_STATUS_READY = "2";
-		/** 游戏中准备完毕 */
+		/** 游戏中 */
 		public static final String PLAYER_STATUS_GAME = "3";
 		/** 结算中 */
 		public static final String PLAYER_STATUS_SETTLE= "4";
 		/** 断线  */
 		public static final String PLAYER_STATUS_CLOSE= "9";
+		
 	}
 	/**
-	 * 回执类型
+	 * 信息类型
 	 * @author Darnell
 	 */
 	public interface ReceiptType {
@@ -46,18 +47,32 @@ public class Constants {
 		/** 结算回执 */
 		public static final String RECEIPT_TYPE_SETTLE= "d";
 	}
+	/** 来自玩家的固定信息
+	 * @author Darnell
+	 */
+	public interface MessageForPlayer {
+		/** 玩家准备完毕 */
+		public static final String PLAYER_READY_OVER = "PRO";
+	}
 	/**
 	 * 回执状态
 	 * @author Darnell
 	 */
 	public interface ReceiptStatus {
-		/** 成功 */
-		public static final String RECEIPT_STATUS_SUCCESS = "s";
+		/******** 游戏中的回执状态 *********/
 		/** 房间准备完毕 */
 		public static final String ROOM_STATUS_SUCCESS = "rs";
-		/** 清理砖块 */
+		/** 游戏中球和时间信息 */
+		public static final String GAME_BALL_TIME = "bt";
+		/** 清理A的砖块 */
 		public static final String CLEAR_BRICK_TO_A = "ca";
+		/** 清理B的砖块 */
 		public static final String CLEAR_BRICK_TO_B = "cb";
+		public static final String MOVE_BAN = "mb";
+		/******** 游戏中的回执状态 *********/
+		
+		/** 成功接收并处理 */
+		public static final String RECEIPT_STATUS_SUCCESS = "s";
 		/** 失败 */
 		public static final String RECEIPT_STATUS_FALSE = "f";
 	}
@@ -67,9 +82,7 @@ public class Constants {
 	 */
 	public interface RoomStatus {
 		/** 准备中 */
-		public static final String ROOM_STATUS_READY = "0";
-		/** 发球中 */
-		public static final String ROOM_STATUS_SERVE = "1";
+		public static final String ROOM_STATUS_READY = "1";
 		/** 游戏中 */
 		public static final String ROOM_STATUS_GAME = "2";
 		/** 结算中 */
@@ -108,18 +121,24 @@ public class Constants {
 		
 		/**球的直径*/
 		public static final double BALL_DIAMETER = 51.2;
+		/**球的半径*/
+		public static final double BALL_RADIUS = 25.6;
 		
 		/**玩家A板的y坐标*/
 		public static final double BAN_TOP_A = 1100.8;
 		/**玩家B板的y坐标*/
 		public static final double BAN_TOP_B = 451.2;
 		
-		/**上下碰到*/
-		public static final String UP_DOWN ="ud";
-		/**左右碰到*/
-		public static final String LEFT_RIGHT = "lr";
+		/**上面触碰 */
+		public static final String COLLISION_UP ="CU";
+		/**下面触碰*/
+		public static final String COLLISION_DOWN ="CD";
+		/**左面触碰*/
+		public static final String COLLISION_LEFT = "CL";
+		/**右面触碰*/
+		public static final String COLLISION_RIGHT = "CR";
 		/**角被碰到*/
-		public static final String ANGLE = "angle";
+		public static final String COLLISION_ANGLE = "CA";
 		/**物体：板*/
 		public static final String OBJ_BAN = "ban";
 		/**物体：砖*/
@@ -128,8 +147,25 @@ public class Constants {
 		public static final String OBJ_WALL = "wall";
 		
 		/** 游戏运行间隔毫秒数 */
-		public static final int RUN_TIME= 10;
+		public static final long RUN_TIME= 10;
 		/** 每个砖的得分 */
 		public static final int BRICK_SCORE = 20;
+		
+		/** 玩家A获胜 */
+		public static final int GAME_WIN_A = 0;
+		/** 玩家B获胜 */
+		public static final int GAME_WIN_B= 1;
+		/** 平局 */
+		public static final int GAME_GRAW = 2;
+	}
+	
+	/** 监视者
+	 * @author Darnell
+	 */
+	public interface Surveillancer{
+		/** 启动延后时间 */
+		public static final long initialDelay = 5;
+		/** 行动运行时间 */
+		public static final long delay = 5;
 	}
 }
