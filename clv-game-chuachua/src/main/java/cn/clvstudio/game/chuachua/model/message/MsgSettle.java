@@ -1,8 +1,11 @@
 package cn.clvstudio.game.chuachua.model.message;
 
 public class MsgSettle {
-	private int winFlag ;
+	/** 获胜方*/
+	private int winFlag;
+	/** 玩家A的分数*/
 	private int scoreA;
+	/** 玩家B的分数*/
 	private int scoreB;
 	public MsgSettle(int winFlag, int scoreA, int scoreB) {
 		super();

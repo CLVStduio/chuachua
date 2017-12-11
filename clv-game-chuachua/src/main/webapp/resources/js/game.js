@@ -38,6 +38,22 @@ function game(ws,msg){
 	}
 	return width;
 }
+function gameOver(obj){
+	var wol ;
+	var score;
+	if(flag == obj.winFlag){
+		wol = 'win';
+	}else {
+		wol = 'lost';
+	}
+	if(flag == Constants.PlayerStatus.PLAYER_FLAG_A){
+		score = ""+obj.scoreA+" : "+objscoreB;
+	}else{
+		score = ""+obj.scoreB+" : "+objscoreA;
+	}
+	window.location.href= ctx+'/settle?wol='+wol+'&score='+score;
+}
+
 function realBan(x){
 	var realX = x*10000*width/10000+origin_x;
 	$(".airBan").css("left",realX);

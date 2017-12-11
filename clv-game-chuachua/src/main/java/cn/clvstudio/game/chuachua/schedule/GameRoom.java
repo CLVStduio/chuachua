@@ -21,6 +21,7 @@ import cn.clvstudio.game.chuachua.model.game.Time;
 import cn.clvstudio.game.chuachua.model.game.Wall;
 import cn.clvstudio.game.chuachua.model.message.MsgGameOfBallTime;
 import cn.clvstudio.game.chuachua.model.message.MsgGameOfScoreCBrick;
+import cn.clvstudio.game.chuachua.model.message.MsgSettle;
 import cn.clvstudio.game.chuachua.service.IMessageService;
 import cn.clvstudio.game.chuachua.service.impl.MessageServiceImpl;
 
@@ -104,27 +105,24 @@ public class GameRoom implements Runnable{
 			return;
 		}
 		if(status.equals(RoomStatus.ROOM_STATUS_GAME)){
-			LOG.debug("房间："+this.roomId+"，游戏中 球：x : " +ball.getCenterX()+" y :"+ball.getCenterY());
 			if(ball.getCenterY() < GameParameter.MIDLINE){
 				isCollision(PlayerStatus.PLAYER_FLAG_B, banToB, brickSToB, ReceiptStatus.CLEAR_BRICK_TO_B);
 			}else{
 				isCollision(PlayerStatus.PLAYER_FLAG_A, banToA, brickSToA, ReceiptStatus.CLEAR_BRICK_TO_A);
 			}
-			LOG.debug("房间："+this.roomId+"，碰撞检测全部完毕");
 			ball.move();
-
-			LOG.debug("房间："+this.roomId+"，球移动后：x : " +ball.getCenterX()+" y :"+ball.getCenterY());
 			time.setTotalMS();
-			LOG.debug("房间："+this.roomId+", 剩余时间："+time.toString());
-			messageService.sendMessageToRoom(playerA.getSession(),playerB.getSession(), 
-					ReceiptType.RECEIPT_TYPE_GAME,ReceiptStatus.GAME_BALL_TIME,new MsgGameOfBallTime(ball,time));
-			LOG.debug("房间："+this.roomId+", 信息发送完毕");
 			if(time.getTotalMS() <= 0 || brickSToB.size() == 0 || brickSToA.size() == 0){
 				this.status = RoomStatus.ROOM_STATUS_SETTLE;
 				playerA.setStatus(PlayerStatus.PLAYER_STATUS_SETTLE);
 				playerB.setStatus(PlayerStatus.PLAYER_STATUS_SETTLE);
+				int winFlag = this.scoreA > this.scoreB ? GameParameter.GAME_WIN_A : this.scoreA == this.scoreB ? GameParameter.GAME_GRAW : GameParameter.GAME_WIN_B;
+				messageService.sendMessageToRoom(playerA.getSession(),playerB.getSession(), 
+						ReceiptType.RECEIPT_TYPE_SETTLE,ReceiptStatus.RECEIPT_STATUS_SUCCESS,new MsgSettle(winFlag,this.scoreA,this.scoreB));
+				return ;
 			}
-			LOG.debug("房间："+this.roomId+"****************");
+			messageService.sendMessageToRoom(playerA.getSession(),playerB.getSession(), 
+					ReceiptType.RECEIPT_TYPE_GAME,ReceiptStatus.GAME_BALL_TIME,new MsgGameOfBallTime(ball,time));
 			return;
 		}
 		if(status.equals(RoomStatus.ROOM_STATUS_SETTLE)){

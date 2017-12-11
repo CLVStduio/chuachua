@@ -21,7 +21,6 @@
 		<img class="quantu" alt="" src="${ctx }/resources/img/wait/quantu-nor.png">
 		<img class="shuaxin" alt="" src="${ctx }/resources/img/wait/shuaxin-icon.gif">
 		<img class="zzxz" alt="" src="${ctx }/resources/img/wait/zzxz.png">
-		<p class="logger">正在连接中</p>
 </div>
 <div id="game" class="game">
 	<div id="Main" class="main">

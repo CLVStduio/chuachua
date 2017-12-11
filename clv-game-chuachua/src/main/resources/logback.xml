@@ -32,7 +32,7 @@
     <logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="${LOG_DEFAULT_LEVEL}" />
 
     <!-- 日志输出级别 -->
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
     </root>

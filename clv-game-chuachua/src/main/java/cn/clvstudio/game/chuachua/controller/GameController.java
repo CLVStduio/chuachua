@@ -22,4 +22,10 @@ public class GameController {
 
 		return "game";
 	}
+	@RequestMapping(value = "/settle")
+	public String settle(ModelMap model,HttpServletRequest request) {
+		model.put("winOrLost", request.getParameter("wol"));
+		model.put("score", request.getParameter("score"));
+		return "settle";
+	}
 }
