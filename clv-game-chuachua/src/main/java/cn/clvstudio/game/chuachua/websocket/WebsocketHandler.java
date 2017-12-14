@@ -85,7 +85,7 @@ public class WebsocketHandler implements WebSocketHandler {
 	 */
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-		LOG.info("监听："+message.getPayload());
+//		LOG.info("监听："+message.getPayload());
 		MessageGeneral msg = JSON.parseObject(message.getPayload().toString(),MessageGeneral.class);
 		Player myPlay = allPlayer.get(session.getId());
 		if(null != myPlay){

@@ -9,7 +9,7 @@ function game(ws,msg){
 	var lookHeight = $(window).height();
 	init(lookWidth,lookHeight);
 	flag = msg;
-	console.log("flag : "+flag);
+//	console.log("flag : "+flag);
 	var doc = document;
 	doc.addEventListener("touchstart",  startTouchScroll, false);
 	doc.addEventListener("touchmove", moveTouchScroll, false);
@@ -47,9 +47,9 @@ function gameOver(obj){
 		wol = 'lost';
 	}
 	if(flag == Constants.PlayerStatus.PLAYER_FLAG_A){
-		score = ""+obj.scoreA+" : "+objscoreB;
+		score = ""+obj.scoreA+" : "+obj.scoreB;
 	}else{
-		score = ""+obj.scoreB+" : "+objscoreA;
+		score = ""+obj.scoreB+" : "+obj.scoreA;
 	}
 	window.location.href= ctx+'/settle?wol='+wol+'&score='+score;
 }

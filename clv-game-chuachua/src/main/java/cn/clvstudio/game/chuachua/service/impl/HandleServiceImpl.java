@@ -57,6 +57,15 @@ public class HandleServiceImpl implements IHandleService {
 					playerToRoom.put(session.getId(), game);
 					
 					matchPlayer.remove(0);
+					if(PlayerStatus.PLAYER_STATUS_READY.equals(myPlay.getStatus())){
+						messageService.sendMessageToUser(myPlay.getSession(), 
+								ReceiptType.RECEIPT_TYPE_MATCH,ReceiptStatus.ROOM_STATUS_SUCCESS,PlayerStatus.PLAYER_FLAG_A );
+					}
+					if(PlayerStatus.PLAYER_STATUS_READY.equals(airPlay.getStatus())){
+						messageService.sendMessageToUser(airPlay.getSession(), 
+								ReceiptType.RECEIPT_TYPE_MATCH,ReceiptStatus.ROOM_STATUS_SUCCESS,PlayerStatus.PLAYER_FLAG_B );
+						
+					}
 					return;
 				}
 				return;

@@ -54,12 +54,16 @@ public class MessageServiceImpl implements IMessageService {
 	}
 	@Override
 	public <T> Boolean sendMessageToRoom(WebSocketSession sessionA,WebSocketSession sessionB, String receiptType,String receiptStatus,Object obj) {
+//		LOG.debug(sessionA+","+sessionB+","+receiptType+","+receiptStatus+","+obj.toString());
 		WebSocketMessage<String> message = new TextMessage(JSON.toJSONString(new MessageReceipt(receiptType,receiptStatus,obj)));
+		LOG.debug(message.toString());
 		try {
 			if(sessionA.isOpen()){
+//				LOG.debug("** TOA **");
 				sessionA.sendMessage(message);
 			}
 			if(sessionB.isOpen()){
+//				LOG.debug("** TOB **");
 				sessionB.sendMessage(message);
 			}
 			return true;

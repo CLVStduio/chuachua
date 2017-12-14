@@ -98,9 +98,14 @@ public class Constants {
 	 */
 	public interface GameParameter {
 		/**最大的速度*/
-		public static final double MAX_SEEP = 20;
+		public static final double MAX_SEEP = 80;
 		/**最小的速度*/
-		public static final double MIN_SEEP = 5;
+		public static final double MIN_SEEP = 20;
+		/**初始速度*/
+		public static final double INIT_SEEP = 20;
+		
+		/** 游戏运行间隔毫秒数 */
+		public static final long RUN_TIME= 40;
 		
 		/**界面的高*/
 		public static final double INTERFACE_HEIGHT = 1600;
@@ -145,9 +150,6 @@ public class Constants {
 		public static final String OBJ_BRICK = "brick";
 		/**物体：墙*/
 		public static final String OBJ_WALL = "wall";
-		
-		/** 游戏运行间隔毫秒数 */
-		public static final long RUN_TIME= 10;
 		/** 每个砖的得分 */
 		public static final int BRICK_SCORE = 20;
 		

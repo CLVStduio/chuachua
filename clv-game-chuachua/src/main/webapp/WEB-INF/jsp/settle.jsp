@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="${ctx}/resources/css/style.css">
 <style type="text/css">
 div {
-	margin:40% 0;
+	margin:20% 0 0 0;
 }
 h1 {
 	color:#4f4f4f;

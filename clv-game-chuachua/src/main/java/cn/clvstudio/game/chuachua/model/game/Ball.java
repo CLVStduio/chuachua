@@ -20,7 +20,7 @@ public class Ball {
 	/**半径*/
 	private double radius ;
 	/**速度*/
-	private int seep ;
+	private double seep ;
 	private double seepx;
 	private double seepy;
 	private int seepxDirection;
@@ -37,7 +37,7 @@ public class Ball {
 		this.movementAngle = movementAngle;
 		this.CenterX = GameParameter.BALL_DIAMETER;
 		this.CenterY = GameParameter.INTERFACE_HEIGHT/2;
-		this.seep=5;
+		this.seep=GameParameter.INIT_SEEP;
 		this.seepx = seep*Math.cos(this.movementAngle*Math.PI/180);
 		this.seepy = seep*Math.sin(this.movementAngle*Math.PI/180);
 		this.seepxDirection = 1;
@@ -60,7 +60,7 @@ public class Ball {
 	 * @param obj 被碰撞的物体
 	 */
 	public synchronized void bounce(String mode,String obj){
-		LOG.info("球被碰撞方式："+mode +" ；对象"+obj);
+		LOG.debug("球被碰撞方式："+mode +" ；对象"+obj);
 		if(GameParameter.OBJ_BAN.equals(obj) && this.seep < GameParameter.MAX_SEEP){
 				this.seep ++ ;
 		}else if(GameParameter.OBJ_BRICK.equals(obj) && this.seep > GameParameter.MIN_SEEP){

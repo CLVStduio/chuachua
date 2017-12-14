@@ -1,5 +1,5 @@
 var ws;
-var url = "192.168.0.102:8080"+ctx;
+var url = "192.168.1.112:8080"+ctx;
 
 window.onload = function connect(){
 		if ('WebSocket' in window) {
@@ -16,20 +16,19 @@ window.onload = function connect(){
 			ws.send('{t: "b", c: ""}');
 		};
 		ws.onmessage = function (evnt) {
+//			console.log(event.data);
 			eval("obj="+event.data);
 			if(obj.t == Constants.ReceiptType.RECEIPT_TYPE_MATCH){
 				//匹配信息
 				if(obj.s == Constants.ReceiptStatus.ROOM_STATUS_SUCCESS){	
-					console.log(obj.msg);
+//					console.log(obj.msg);
 					$("#match").css("display","none");
 					$("#game").css("display","block");
 					game(ws,obj.msg);
 					ws.send('{t: "'+Constants.ReceiptType.RECEIPT_TYPE_GAME
 							+'", c: "'+Constants.MessageForPlayer.PLAYER_READY_OVER+'"}');
-					console.log("匹配信息 over ");
+//					console.log("匹配信息 over ");
 				}else if(obj.s == "f"){
-					console.log(obj.msg);
-					ws.send('{t: "'+Constants.ReceiptType.RECEIPT_TYPE_MATCH+'", c: ""}');
 				}
 			}else if(obj.t == Constants.ReceiptType.RECEIPT_TYPE_GAME){
 				//游戏信息
@@ -43,13 +42,13 @@ window.onload = function connect(){
 				}else if(obj.s == Constants.ReceiptStatus.CLEAR_BRICK_TO_A){
 					realBrick(obj.msg,0);
 				}else if(obj.s == "f"){
-					console.log(obj.msg);
-					ws.send('{t: "'+Constants.ReceiptType.RECEIPT_TYPE_MATCH+'", c: ""}');
+//					console.log(obj.msg);
+//					ws.send('{t: "'+Constants.ReceiptType.RECEIPT_TYPE_MATCH+'", c: ""}');
 				}
 			}else if(obj.t == Constants.ReceiptType.RECEIPT_TYPE_SETTLE){
 				//结算信息
 				if(obj.s == Constants.ReceiptStatus.RECEIPT_STATUS_SUCCESS){	
-					
+					gameOver(obj.msg);
 				}
 			}
 		};

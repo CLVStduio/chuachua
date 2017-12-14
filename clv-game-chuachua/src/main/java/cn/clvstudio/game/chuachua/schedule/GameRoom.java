@@ -93,36 +93,39 @@ public class GameRoom implements Runnable{
 				this.status = RoomStatus.ROOM_STATUS_GAME;
 				return;
 			}
-			if(PlayerStatus.PLAYER_STATUS_READY.equals(playerA.getStatus())){
-				messageService.sendMessageToUser(playerA.getSession(), 
-						ReceiptType.RECEIPT_TYPE_MATCH,ReceiptStatus.ROOM_STATUS_SUCCESS,PlayerStatus.PLAYER_FLAG_A );
-			}
-			if(PlayerStatus.PLAYER_STATUS_READY.equals(playerB.getStatus())){
-				messageService.sendMessageToUser(playerB.getSession(), 
-						ReceiptType.RECEIPT_TYPE_MATCH,ReceiptStatus.ROOM_STATUS_SUCCESS,PlayerStatus.PLAYER_FLAG_B );
-				
-			}
 			return;
 		}
 		if(status.equals(RoomStatus.ROOM_STATUS_GAME)){
+			LOG.debug("********");
 			if(ball.getCenterY() < GameParameter.MIDLINE){
 				isCollision(PlayerStatus.PLAYER_FLAG_B, banToB, brickSToB, ReceiptStatus.CLEAR_BRICK_TO_B);
 			}else{
 				isCollision(PlayerStatus.PLAYER_FLAG_A, banToA, brickSToA, ReceiptStatus.CLEAR_BRICK_TO_A);
 			}
+			LOG.debug("碰撞处理完毕");
 			ball.move();
 			time.setTotalMS();
+			LOG.debug("球移动结束");
 			if(time.getTotalMS() <= 0 || brickSToB.size() == 0 || brickSToA.size() == 0){
+				LOG.debug("判断游戏结束");
 				this.status = RoomStatus.ROOM_STATUS_SETTLE;
-				playerA.setStatus(PlayerStatus.PLAYER_STATUS_SETTLE);
-				playerB.setStatus(PlayerStatus.PLAYER_STATUS_SETTLE);
+				if(!PlayerStatus.PLAYER_STATUS_CLOSE.equals(playerA.getStatus())){
+					playerA.setStatus(PlayerStatus.PLAYER_STATUS_SETTLE);
+				}
+				if(!PlayerStatus.PLAYER_STATUS_CLOSE.equals(playerB.getStatus())){
+					playerB.setStatus(PlayerStatus.PLAYER_STATUS_SETTLE);
+				}
 				int winFlag = this.scoreA > this.scoreB ? GameParameter.GAME_WIN_A : this.scoreA == this.scoreB ? GameParameter.GAME_GRAW : GameParameter.GAME_WIN_B;
 				messageService.sendMessageToRoom(playerA.getSession(),playerB.getSession(), 
 						ReceiptType.RECEIPT_TYPE_SETTLE,ReceiptStatus.RECEIPT_STATUS_SUCCESS,new MsgSettle(winFlag,this.scoreA,this.scoreB));
 				return ;
 			}
-			messageService.sendMessageToRoom(playerA.getSession(),playerB.getSession(), 
-					ReceiptType.RECEIPT_TYPE_GAME,ReceiptStatus.GAME_BALL_TIME,new MsgGameOfBallTime(ball,time));
+			LOG.debug("是否结束游戏判断完毕");
+//			messageService.sendMessageToRoom(playerA.getSession(),playerB.getSession(), 
+//					ReceiptType.RECEIPT_TYPE_GAME,ReceiptStatus.GAME_BALL_TIME,new MsgGameOfBallTime(ball,time));
+			messageService.sendMessageToUser(playerA.getSession(), ReceiptType.RECEIPT_TYPE_GAME, ReceiptStatus.GAME_BALL_TIME, new MsgGameOfBallTime(ball,time));
+			messageService.sendMessageToUser(playerB.getSession(), ReceiptType.RECEIPT_TYPE_GAME, ReceiptStatus.GAME_BALL_TIME, new MsgGameOfBallTime(ball,time));
+			LOG.debug("-------");
 			return;
 		}
 		if(status.equals(RoomStatus.ROOM_STATUS_SETTLE)){
