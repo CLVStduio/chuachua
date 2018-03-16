@@ -37,11 +37,13 @@
 	font-size:50px;
 	color:#fff;
 	writing-mode:vertical-rl;
+	-webkit-writing-mode: vertical-rl;
 }
 .time {
 	font-size:50px;
 	color:#fff;
 	writing-mode:vertical-lr;
+	-webkit-writing-mode: vertical-lr;
 }
 .bricks {
 	outline:#fff solid thin;

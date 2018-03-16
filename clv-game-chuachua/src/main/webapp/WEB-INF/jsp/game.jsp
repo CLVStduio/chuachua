@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="/WEB-INF/tlds/c.tld"%>
 <c:set var="ctx">${pageContext.request.contextPath}</c:set>
-<c:set var="version">0.0.0.9</c:set>
+<c:set var="version">0.0.0.10</c:set>
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -11,9 +11,6 @@
 <link rel="stylesheet" href="${ctx}/resources/css/style.css">
 <link rel="stylesheet" href="${ctx}/resources/css/game.css">
 <style type="text/css">
-.logger {
-	
-}
 </style>
 </head>
 <body>
@@ -45,4 +42,7 @@ $(function(){
 <script type="text/javascript" src="${ctx }/resources/js/constants.js?version=${version }"></script>
 <script type="text/javascript" src="${ctx }/resources/js/game.js?version=${version }"></script>
 <script type="text/javascript" src="${ctx }/resources/js/webSocket.js?version=${version }"></script>
+<!-- 
+<script type="text/javascript" src="${ctx }/resources/js/min.js?version=${version }"></script>
+ -->
 </html>

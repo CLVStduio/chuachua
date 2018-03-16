@@ -32,6 +32,9 @@ public class MessageServiceImpl implements IMessageService {
 			} catch (IOException e) {
 				LOG.error("单发消息异常-->信息内容：{} ，发给对象：{}，异常信息：{}", message.toString(),session.getId(),e);
 				return false;
+			}catch (Exception e){
+				LOG.error("单发消息异常E-->信息内容：{} ，发给对象：{}，异常信息：{}", message.toString(),session.getId(),e);
+				return false;
 			}
 			return true;
 		}
@@ -47,6 +50,9 @@ public class MessageServiceImpl implements IMessageService {
 			} catch (IOException e) {
 				LOG.error("单发消息异常-->信息内容：{} ，发给对象：{}，异常信息：{}", message.toString(),session.getId(),e);
 				return false;
+			} catch (Exception e){
+				LOG.error("单发消息异常E-->信息内容：{} ，发给对象：{}，异常信息：{}", message.toString(),session.getId(),e);
+				return false;
 			}
 			return true;
 		}
@@ -59,16 +65,21 @@ public class MessageServiceImpl implements IMessageService {
 		LOG.debug(message.toString());
 		try {
 			if(sessionA.isOpen()){
-//				LOG.debug("** TOA **");
+				LOG.debug("** TOA **");
 				sessionA.sendMessage(message);
 			}
+			LOG.debug("** TOAEND **");
 			if(sessionB.isOpen()){
-//				LOG.debug("** TOB **");
+				LOG.debug("** TOB **");
 				sessionB.sendMessage(message);
 			}
+			LOG.debug("** TOBEND **");
 			return true;
 		} catch (IOException e) {
 			LOG.error("双发消息异常-->信息内容：{} ，发给对象：{}，异常信息：{}", message.toString(),sessionA.getId(),e);
+			return false;
+		}catch (Exception e){
+			LOG.error("双发消息异常E-->信息内容：{} ，发给对象：{}，异常信息：{}", message.toString(),sessionA.getId(),e);
 			return false;
 		}
 	}

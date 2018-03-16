@@ -121,10 +121,10 @@ public class GameRoom implements Runnable{
 				return ;
 			}
 			LOG.debug("是否结束游戏判断完毕");
-//			messageService.sendMessageToRoom(playerA.getSession(),playerB.getSession(), 
-//					ReceiptType.RECEIPT_TYPE_GAME,ReceiptStatus.GAME_BALL_TIME,new MsgGameOfBallTime(ball,time));
-			messageService.sendMessageToUser(playerA.getSession(), ReceiptType.RECEIPT_TYPE_GAME, ReceiptStatus.GAME_BALL_TIME, new MsgGameOfBallTime(ball,time));
-			messageService.sendMessageToUser(playerB.getSession(), ReceiptType.RECEIPT_TYPE_GAME, ReceiptStatus.GAME_BALL_TIME, new MsgGameOfBallTime(ball,time));
+			messageService.sendMessageToRoom(playerA.getSession(),playerB.getSession(), 
+					ReceiptType.RECEIPT_TYPE_GAME,ReceiptStatus.GAME_BALL_TIME,new MsgGameOfBallTime(ball,time));
+//			messageService.sendMessageToUser(playerA.getSession(), ReceiptType.RECEIPT_TYPE_GAME, ReceiptStatus.GAME_BALL_TIME, new MsgGameOfBallTime(ball,time));
+//			messageService.sendMessageToUser(playerB.getSession(), ReceiptType.RECEIPT_TYPE_GAME, ReceiptStatus.GAME_BALL_TIME, new MsgGameOfBallTime(ball,time));
 			LOG.debug("-------");
 			return;
 		}

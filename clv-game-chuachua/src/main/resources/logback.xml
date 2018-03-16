@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml> 
 <!--scan 属自动扫描文件，实时更新配置 -->
 <configuration scan="true" scanPeriod="3600 seconds" >
     <!--appender 输出目的地 console 控制台 -->

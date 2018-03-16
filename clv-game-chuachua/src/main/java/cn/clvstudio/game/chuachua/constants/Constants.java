@@ -98,14 +98,14 @@ public class Constants {
 	 */
 	public interface GameParameter {
 		/**最大的速度*/
-		public static final double MAX_SEEP = 80;
+		public static final double MAX_SEEP = 30;
 		/**最小的速度*/
-		public static final double MIN_SEEP = 20;
+		public static final double MIN_SEEP = 5;
 		/**初始速度*/
-		public static final double INIT_SEEP = 20;
+		public static final double INIT_SEEP = 5;
 		
 		/** 游戏运行间隔毫秒数 */
-		public static final long RUN_TIME= 40;
+		public static final long RUN_TIME= 10;
 		
 		/**界面的高*/
 		public static final double INTERFACE_HEIGHT = 1600;
